@@ -21,7 +21,7 @@ const imgURLMap = {
 		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/mocha2.jpeg',
 	],
 	dd: [
-		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/dd.jpeg',
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/dd.jpg',
 	],
 }
 
