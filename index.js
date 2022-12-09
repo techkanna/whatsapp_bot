@@ -122,7 +122,7 @@ client.on('message_create', async (msg) => {
 	}
 
 	if (msg.body === CMD.mocha) {
-		const urls = imgURLMap.mocha
+		const urls = imgURLMap.senthamil
 		for (let i = 0; i < urls.length; i++) {
 			const url = urls[i];			
 			const media = await MessageMedia.fromUrl(url);
