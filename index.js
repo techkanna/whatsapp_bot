@@ -3,11 +3,26 @@ const qrcode = require('qrcode-terminal')
 const { Client, MessageMedia } = require('whatsapp-web.js');
 
 const imgURLMap = {
-	senthil: [],
-	venkat: [],
-	mahe: [],
-	senthamil: [],
-	dd: [],
+	senthil: [
+		'https://techkanna.netlify.app/img/me.jpg'
+	],
+	venkat: [
+		'https://techvenkatvis.github.io/myportfolio/venkat222.jpg',
+		'https://techvenkatvis.github.io/myportfolio/venkat1.jpg',
+		'https://techvenkatvis.github.io/myportfolio/venkat3.jpg'
+	],
+	mahe: [
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/mahe1.jpeg',
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/mahe2.jpeg',
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/mahe3.jpeg',
+	],
+	senthamil: [
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/mocha1.jpeg',
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/mocha2.jpeg',
+	],
+	dd: [
+		'https://raw.githubusercontent.com/techkanna/whatsapp_bot/main/assets/dd.jpeg',
+	],
 }
 
 // Use the saved values
@@ -25,20 +40,56 @@ client.on('ready', () => {
 	console.log('Client is ready!');
 	client.getChats().then(chats => {
 		const chat = chats.find(ch => ch.name === 'Web development')
-		client.sendMessage(chat.id._serialized, "chat bot is now on")
+		client.sendMessage(chat.id._serialized, "chat bot is now on \n type -h for help")
 	})
 });
+
+const CMD = {
+	h: '-h',
+	welcome: '!welcome',
+	sk: '!sk',
+	vis: '!vis',
+	mahe: '!mahe',
+	mocha: '!mocha',
+	dd: '!dd',
+	ping: '!ping',
+	rn: '!rn',
+	all_pics: '!all_pics',
+}
 
 // Mention everyone
 client.on('message', async (msg) => {
 
-	if (msg.body === '!ping') {
+	if (msg.body === CMD.ping) {
 		// Send a new message as a reply to the current one
 		msg.reply('pong replay');
+	} 
+});
 
-	} else if (msg.body == '!everyone') {
-		const chat = await msg.getChat();
+client.on('message_create', async (msg) => {
+	const chat = await msg.getChat();
+	// Fired on all message creations, including your own
+	if (msg.fromMe) {
+		if (msg.body === '!me') {
+			const url = imgURLMap.senthil[0]
+			const media = await MessageMedia.fromUrl(url);
+			chat.sendMessage(media);
+		}		
+	}
+	
+	if(chat.name !== 'Web development') return
+	
+	if (msg.body === CMD.sk) {
+		const url = imgURLMap.senthil[0]
+		const media = await MessageMedia.fromUrl(url);
+		chat.sendMessage(media);
+	}
 
+	if (msg.body === msg.body.includes(CMD.rn)) {
+		msg.react('👍');
+	}
+
+	if (msg.body == CMD.welcome) {
 		let text = "";
 		let mentions = [];
 
@@ -46,71 +97,74 @@ client.on('message', async (msg) => {
 			const contact = await client.getContactById(participant.id._serialized);
 
 			mentions.push(contact);
-			text += `Hello :) @${participant.id.user} ,`;
+			text += `Welcome to team @${participant.id.user} :) 🎉🥳 \n`;
 		}
 
 		await chat.sendMessage(text, { mentions });
 	}
-});
-
-client.on('message_create', async (msg) => {
-	// Fired on all message creations, including your own
-	if (msg.fromMe) {
-		// do stuff here
-		if (msg.body === '!rn') {
-			msg.react('👍');
-		}
-
-		if (msg.body === '!me') {
-			const chat = await msg.getChat();
-			const url = 'https://techkanna.netlify.app/img/me.jpg'
-			const media = await MessageMedia.fromUrl(url, { caption: 'Here\'s your requested media.' });
+	
+	if (msg.body === CMD.vis) {
+		const urls = imgURLMap.venkat
+		for (let i = 0; i < urls.length; i++) {
+			const url = urls[i];			
+			const media = await MessageMedia.fromUrl(url);
 			chat.sendMessage(media);
 		}
+	}
 
-		if (msg.body == '!everyone') {
-			const chat = await msg.getChat();
+	if (msg.body === CMD.mahe) {
+		const urls = imgURLMap.mahe
+		for (let i = 0; i < urls.length; i++) {
+			const url = urls[i];			
+			const media = await MessageMedia.fromUrl(url);
+			chat.sendMessage(media);
+		}
+	}
 
-			let text = "";
-			let mentions = [];
+	if (msg.body === CMD.mocha) {
+		const urls = imgURLMap.mocha
+		for (let i = 0; i < urls.length; i++) {
+			const url = urls[i];			
+			const media = await MessageMedia.fromUrl(url);
+			chat.sendMessage(media);
+		}
+	}
 
-			for (let participant of chat.participants) {
-				const contact = await client.getContactById(participant.id._serialized);
+	if (msg.body === CMD.dd) {
+		const urls = imgURLMap.dd
+		for (let i = 0; i < urls.length; i++) {
+			const url = urls[i];			
+			const media = await MessageMedia.fromUrl(url);
+			chat.sendMessage(media);
+		}
+	}
 
-				mentions.push(contact);
-				text += `Hello :) @${participant.id.user} ,`;
-			}
+	if (msg.body === CMD.h) {
+		let msg = "Commands you can use"
+		let cmds = ''
 
-			await chat.sendMessage(text, { mentions });
+		for (let name in CMD) {
+			cmds += `\n ${CMD[name]}`
 		}
 
+		await chat.sendMessage(msg + cmds);		
 	}
 
-	if (msg.body === '!vis') {
-		const chat = await msg.getChat();
-
-		const url = 'https://techvenkatvis.github.io/myportfolio/venkat3.jpg'
-
-		const media = await MessageMedia.fromUrl(url);
-		chat.sendMessage(media);
+	if (msg.body === CMD.all_pics) {
+		const urls = [
+			...imgURLMap.senthil, 
+			...imgURLMap.venkat, 
+			...imgURLMap.mahe, 
+			...imgURLMap.senthamil, 
+		]
+		for (let i = 0; i < urls.length; i++) {
+			const url = urls[i];
+			const media = await MessageMedia.fromUrl(url);
+			chat.sendMessage(media);
+		}
 	}
 
-	if (msg.body === '!vis1') {
-		const chat = await msg.getChat();
 
-		const url = 'https://techvenkatvis.github.io/myportfolio/venkat1.jpg'
-		const media = await MessageMedia.fromUrl(url);
-		chat.sendMessage(media);
-	}
-
-	if (msg.body === '!vis2') {
-		const chat = await msg.getChat();
-
-		const url = 'https://techvenkatvis.github.io/myportfolio/venkat222.jpg'
-
-		const media = await MessageMedia.fromUrl(url);
-		chat.sendMessage(media);
-	}
 });
 
 
